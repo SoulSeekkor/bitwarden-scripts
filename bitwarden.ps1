@@ -41,21 +41,21 @@ if ($output -eq "") {
 }
 
 $scriptsDir = "${output}\scripts"
-$githubBaseUrl = "https://raw.githubusercontent.com/bitwarden/core/master"
+$githubBaseUrl = "https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
 $coreVersion = "latest" #"1.20.0"
 $webVersion = "latest" #"1.27.0"
 
 # Functions
 
 function Download-Self {
-    Invoke-RestMethod -OutFile $scriptPath -Uri "${githubBaseUrl}/scripts/bitwarden.ps1"
+    Invoke-RestMethod -OutFile $scriptPath -Uri "${githubBaseUrl}/bitwarden.ps1"
 }
 
 function Download-Run-File {
     if (!(Test-Path -Path $scriptsDir)) {
         New-Item -ItemType directory -Path $scriptsDir | Out-Null
     }
-    Invoke-RestMethod -OutFile $scriptsDir\run.ps1 -Uri "${githubBaseUrl}/scripts/run.ps1"
+    Invoke-RestMethod -OutFile $scriptsDir\run.ps1 -Uri "${githubBaseUrl}/run.ps1"
 }
 
 function Check-Output-Dir-Exists {

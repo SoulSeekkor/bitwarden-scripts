@@ -36,14 +36,14 @@ then
 fi
 
 SCRIPTS_DIR="$OUTPUT/scripts"
-GITHUB_BASE_URL="https://raw.githubusercontent.com/bitwarden/core/master"
-COREVERSION="1.20.0"
-WEBVERSION="1.27.0"
+GITHUB_BASE_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
+COREVERSION="latest" #"1.20.0"
+WEBVERSION="latest" #"1.27.0"
 
 # Functions
 
 function downloadSelf() {
-    curl -s -o $SCRIPT_PATH $GITHUB_BASE_URL/scripts/bitwarden.sh
+    curl -s -o $SCRIPT_PATH $GITHUB_BASE_URL/bitwarden.sh
     chmod u+x $SCRIPT_PATH
 }
 
@@ -52,7 +52,7 @@ function downloadRunFile() {
     then
         mkdir $SCRIPTS_DIR
     fi
-    curl -s -o $SCRIPTS_DIR/run.sh $GITHUB_BASE_URL/scripts/run.sh
+    curl -s -o $SCRIPTS_DIR/run.sh $GITHUB_BASE_URL/run.sh
     chmod u+x $SCRIPTS_DIR/run.sh
     rm -f $SCRIPTS_DIR/install.sh
 }
