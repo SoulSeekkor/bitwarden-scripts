@@ -12,11 +12,11 @@ param (
 $year = (Get-Date).year
 
 Write-Host @'
- _     _ _                         _            
-| |__ (_) |___      ____ _ _ __ __| | ___ _ __  
-| '_ \| | __\ \ /\ / / _` | '__/ _` |/ _ \ '_ \ 
-| |_) | | |_ \ V  V / (_| | | | (_| |  __/ | | |
-|_.__/|_|\__| \_/\_/ \__,_|_|  \__,_|\___|_| |_|
+                 _ _         _     _ _                         _            
+ ___  ___  _   _| ( )___    | |__ (_) |___      ____ _ _ __ __| | ___ _ __  
+/ __|/ _ \| | | | |// __|   | '_ \| | __\ \ /\ / / _` | '__/ _` |/ _ \ '_ \ 
+\__ \ (_) | |_| | | \__ \   | |_) | | |_ \ V  V / (_| | | | (_| |  __/ | | |
+|___/\___/ \__,_|_| |___/   |_.__/|_|\__| \_/\_/ \__,_|_|  \__,_|\___|_| |_|
 '@
 
 Write-Host "
@@ -42,8 +42,8 @@ if ($output -eq "") {
 
 $scriptsDir = "${output}\scripts"
 $githubBaseUrl = "https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-$coreVersion = "latest" #"1.20.0"
-$webVersion = "latest" #"1.27.0"
+$coreVersion = "1.20.0"
+$webVersion = "1.27.0"
 
 # Functions
 
