@@ -200,7 +200,7 @@ then
     dockerComposeDown
     update
     restart
-    echo "Pausing 60 seconds for database to come online. Please wait..."
-    sleep 60
+    echo "Pausing 30 seconds for database to come online. Please wait..."
+    sleep 30
     updateDatabase
 fi
