@@ -154,7 +154,7 @@ elseif ($update) {
     Docker-Compose-Down
     Update
     Restart
-    echo "Pausing 30 seconds for database to come online. Please wait..."
-    Start-Sleep -s 30
+    echo "Pausing 60 seconds for database to come online. Please wait..."
+    Start-Sleep -s 60
     Update-Database
 }
