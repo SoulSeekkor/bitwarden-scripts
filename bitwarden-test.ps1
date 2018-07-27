@@ -17,17 +17,17 @@ Write-Host @'
 / __|/ _ \| | | | |// __| | '_ \| | __\ \ /\ / / _` | '__/ _` |/ _ \ '_ \ 
 \__ \ (_) | |_| | | \__ \ | |_) | | |_ \ V  V / (_| | | | (_| |  __/ | | |
 |___/\___/ \__,_|_| |___/ |_.__/|_|\__| \_/\_/ \__,_|_|  \__,_|\___|_| |_|
-                          __                   __   
-                        _/  |_  ____   _______/  |_ 
-                        \   __\/ __ \ /  ___/\   __\
-                        |  | \  ___/ \___ \  |  |  
-                        |__|  \___  >____  > |__|  
-                                  \/     \/        
+         __                   __   
+       _/  |_  ____   _______/  |_ 
+       \   __\/ __ \ /  ___/\   __\
+       |  | \  ___/ \___ \  |  |  
+       |__|  \___  >____  > |__|  
+                 \/     \/        
 '@
 
 Write-Host "
 Open source password management solutions
-Copyright 2015-${year}, Soul's Services
+Copyright ${year}, Soul's Services
 https://soulseekkor.com, https://github.com/soulseekkor
 
 ===================================================
@@ -54,7 +54,7 @@ $webVersion = "test"
 # Functions
 
 function Download-Self {
-    Invoke-RestMethod -OutFile $scriptPath -Uri "${githubBaseUrl}/bitwarden.ps1"
+    Invoke-RestMethod -OutFile $scriptPath -Uri "${githubBaseUrl}/bitwarden-test.ps1"
 }
 
 function Download-Run-File {

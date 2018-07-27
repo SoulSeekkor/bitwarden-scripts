@@ -1,7 +1,7 @@
 param (
     [string]$outputDir = "../.",
-    [string]$coreVersion = "latest",
-    [string]$webVersion = "latest",
+    [string]$coreVersion = "1.21.0",
+    [string]$webVersion = "2.0.0",
     [switch] $install,
     [switch] $start,
     [switch] $restart,

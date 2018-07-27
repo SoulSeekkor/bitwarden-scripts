@@ -18,7 +18,7 @@ EOF
 
 cat << EOF
 Open source password management solutions
-Copyright 2015-$(date +'%Y'), Soul's Services
+Copyright $(date +'%Y'), Soul's Services
 https://soulseekkor.com, https://github.com/soulseekkor
 
 ===================================================
@@ -49,7 +49,7 @@ WEBVERSION="test"
 # Functions
 
 function downloadSelf() {
-    curl -s -o $SCRIPT_PATH $GITHUB_BASE_URL/bitwarden.sh
+    curl -s -o $SCRIPT_PATH $GITHUB_BASE_URL/bitwarden-test.sh
     chmod u+x $SCRIPT_PATH
 }
 
