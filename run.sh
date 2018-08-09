@@ -14,13 +14,13 @@ then
     OUTPUT_DIR=$2
 fi
 
-COREVERSION="1.21.0"
+COREVERSION="1.22.0"
 if [ $# -gt 2 ]
 then
     COREVERSION=$3
 fi
 
-WEBVERSION="2.0.0"
+WEBVERSION="2.1.1"
 if [ $# -gt 3 ]
 then
     WEBVERSION=$4

@@ -71,7 +71,7 @@ function Check-Output-Dir-Exists {
 }
 
 function Check-Output-Dir-Not-Exists {
-    if (Test-Path -Path $output) {
+    if (Test-Path -Path "$output\docker") {
         throw "Looks like Bitwarden is already installed at $output."
     }
 }
@@ -80,7 +80,7 @@ function Check-Output-Dir-Not-Exists {
 
 if ($install) {
     Check-Output-Dir-Not-Exists
-    New-Item -ItemType directory -Path $output | Out-Null
+    New-Item -ItemType directory -Path $output -ErrorAction Ignore | Out-Null
     Download-Run-File
     Invoke-Expression "$scriptsDir\run.ps1 -install -outputDir $output -coreVersion $coreVersion -webVersion $webVersion"
 }
