@@ -88,7 +88,7 @@ function Docker-Compose-Pull {
 }
 
 function Docker-Prune {
-    docker image prune -f --filter="label=com.bitwarden.product=bitwarden"
+    docker image prune -f --filter="label=com.soulseekkor.product=bitwarden"
 }
 
 function Update-Lets-Encrypt {
