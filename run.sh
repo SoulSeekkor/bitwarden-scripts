@@ -14,13 +14,13 @@ then
     OUTPUT_DIR=$2
 fi
 
-COREVERSION="1.22.0"
+COREVERSION="1.23.0"
 if [ $# -gt 2 ]
 then
     COREVERSION=$3
 fi
 
-WEBVERSION="2.1.1"
+WEBVERSION="2.2.0"
 if [ $# -gt 3 ]
 then
     WEBVERSION=$4
@@ -130,7 +130,7 @@ function dockerComposePull() {
 }
 
 function dockerPrune() {
-    docker image prune -f
+    docker image prune -f --filter="label=com.bitwarden.product=bitwarden"
 }
 
 function updateLetsEncrypt() {

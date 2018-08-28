@@ -1,7 +1,7 @@
 param (
     [string]$outputDir = "../.",
-    [string]$coreVersion = "1.22.0",
-    [string]$webVersion = "2.1.1",
+    [string]$coreVersion = "1.23.0",
+    [string]$webVersion = "2.2.0",
     [switch] $install,
     [switch] $start,
     [switch] $restart,
@@ -34,8 +34,8 @@ function Install() {
     
         if ($letsEncrypt -eq "y") {
             Write-Host "(!) " -f cyan -nonewline
-            [string]$email = $( Read-Host "Enter your email address (Let's Encrypt will send you certificate " +
-                "expiration reminders)" )
+            [string]$email = $( Read-Host ("Enter your email address (Let's Encrypt will send you certificate " +
+                "expiration reminders)") )
             echo ""
     
             $letsEncryptPath = "${outputDir}/letsencrypt"
@@ -88,7 +88,7 @@ function Docker-Compose-Pull {
 }
 
 function Docker-Prune {
-    docker image prune -f
+    docker image prune -f --filter="label=com.bitwarden.product=bitwarden"
 }
 
 function Update-Lets-Encrypt {
