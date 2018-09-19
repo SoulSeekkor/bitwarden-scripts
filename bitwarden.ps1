@@ -4,6 +4,7 @@ param (
     [switch] $restart,
     [switch] $stop,
     [switch] $update,
+    [switch] $rebuild,
     [switch] $updatedb,
     [switch] $updateself,
     [string] $output = ""
@@ -42,8 +43,8 @@ if ($output -eq "") {
 
 $scriptsDir = "${output}\scripts"
 $githubBaseUrl = "https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-$coreVersion = "1.23.0"
-$webVersion = "2.2.0"
+$coreVersion = "1.24.0"
+$webVersion = "2.3.0"
 
 # Functions
 
@@ -86,6 +87,10 @@ elseif ($update) {
     Check-Output-Dir-Exists
     Download-Run-File
     Invoke-Expression "$scriptsDir\run.ps1 -update -outputDir $output -coreVersion $coreVersion -webVersion $webVersion"
+}
+elseif ($rebuild) {
+    Check-Output-Dir-Exists
+    Invoke-Expression "$scriptsDir\run.ps1 -rebuild -outputDir $output -coreVersion $coreVersion -webVersion $webVersion"
 }
 elseif ($updatedb) {
     Check-Output-Dir-Exists

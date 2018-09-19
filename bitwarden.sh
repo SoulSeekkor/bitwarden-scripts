@@ -37,8 +37,8 @@ fi
 
 SCRIPTS_DIR="$OUTPUT/scripts"
 GITHUB_BASE_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-COREVERSION="1.23.0"
-WEBVERSION="2.2.0"
+COREVERSION="1.24.0"
+WEBVERSION="2.3.0"
 
 # Functions
 
@@ -90,6 +90,10 @@ then
     checkOutputDirExists
     downloadRunFile
     $SCRIPTS_DIR/run.sh update $OUTPUT $COREVERSION $WEBVERSION
+elif [ "$1" == "rebuild" ]
+then
+    checkOutputDirExists
+    $SCRIPTS_DIR/run.sh rebuild $OUTPUT $COREVERSION $WEBVERSION
 elif [ "$1" == "updatedb" ]
 then
     checkOutputDirExists

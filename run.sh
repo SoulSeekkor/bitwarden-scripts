@@ -14,13 +14,13 @@ then
     OUTPUT_DIR=$2
 fi
 
-COREVERSION="1.23.0"
+COREVERSION="1.24.0"
 if [ $# -gt 2 ]
 then
     COREVERSION=$3
 fi
 
-WEBVERSION="2.2.0"
+WEBVERSION="2.3.0"
 if [ $# -gt 3 ]
 then
     WEBVERSION=$4
@@ -96,36 +96,29 @@ function install() {
         --env-file $ENV_DIR/uid.env soulseekkor/bitwarden-setup:$COREVERSION \
         dotnet Setup.dll -install 1 -domain $DOMAIN -letsencrypt $LETS_ENCRYPT -os $OS \
         -corev $COREVERSION -webv $WEBVERSION
-    
-    echo ""
-    echo "Setup complete"
-    echo ""
 }
 
 function dockerComposeUp() {
-    if [ -f "${DOCKER_DIR}/docker-compose.override.yml" ]
-    then
-        docker-compose -f $DOCKER_DIR/docker-compose.yml -f $DOCKER_DIR/docker-compose.override.yml up -d
-    else
-        docker-compose -f $DOCKER_DIR/docker-compose.yml up -d
-    fi
+    dockerComposeFiles
+    docker-compose up -d
 }
 
 function dockerComposeDown() {
-    if [ -f "${DOCKER_DIR}/docker-compose.override.yml" ]
-    then
-        docker-compose -f $DOCKER_DIR/docker-compose.yml -f $DOCKER_DIR/docker-compose.override.yml down
-    else
-        docker-compose -f $DOCKER_DIR/docker-compose.yml down
-    fi
+    dockerComposeFiles
+    docker-compose down
 }
 
 function dockerComposePull() {
+    dockerComposeFiles
+    docker-compose pull
+}
+
+function dockerComposeFiles() {
     if [ -f "${DOCKER_DIR}/docker-compose.override.yml" ]
     then
-        docker-compose -f $DOCKER_DIR/docker-compose.yml -f $DOCKER_DIR/docker-compose.override.yml pull
+        export COMPOSE_FILE="$DOCKER_DIR/docker-compose.yml:$DOCKER_DIR/docker-compose.override.yml"
     else
-        docker-compose -f $DOCKER_DIR/docker-compose.yml pull
+        export COMPOSE_FILE="$DOCKER_DIR/docker-compose.yml"
     fi
 }
 
@@ -152,7 +145,10 @@ function updateDatabase() {
 }
 
 function update() {
-    pullSetup
+    if [ "$1" == "withpull" ]
+    then
+        pullSetup
+    fi
     docker run -i --rm --name setup -v $OUTPUT_DIR:/bitwarden \
         --env-file $ENV_DIR/uid.env soulseekkor/bitwarden-setup:$COREVERSION \
         dotnet Setup.dll -update 1 -os $OS -corev $COREVERSION -webv $WEBVERSION
@@ -198,9 +194,13 @@ then
 elif [ "$1" == "update" ]
 then
     dockerComposeDown
-    update
+    update withpull
     restart
     echo "Pausing 60 seconds for database to come online. Please wait..."
     sleep 60
     updateDatabase
+elif [ "$1" == "rebuild" ]
+then
+    dockerComposeDown
+    update nopull
 fi
