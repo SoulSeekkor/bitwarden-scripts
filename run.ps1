@@ -80,8 +80,8 @@ function Docker-Compose-Files {
 }
 
 function Docker-Prune {
-    docker image prune --all --force --filter="label=com.bitwarden.product=bitwarden"
-    docker image prune --all --force --filter="label=com.soulseekkor.product=bitwarden"
+    docker image prune --force --filter="label=com.bitwarden.product=bitwarden"
+    docker image prune --force --filter="label=com.soulseekkor.product=bitwarden"
 }
 
 function Update-Lets-Encrypt {
