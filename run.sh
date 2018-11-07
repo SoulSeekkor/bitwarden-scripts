@@ -14,13 +14,13 @@ then
     OUTPUT_DIR=$2
 fi
 
-COREVERSION="1.25.0"
+COREVERSION="1.26.0"
 if [ $# -gt 2 ]
 then
     COREVERSION=$3
 fi
 
-WEBVERSION="2.4.0"
+WEBVERSION="2.5.0"
 if [ $# -gt 3 ]
 then
     WEBVERSION=$4
@@ -123,8 +123,9 @@ function dockerComposeFiles() {
 }
 
 function dockerPrune() {
-    docker image prune --force --filter="label=com.bitwarden.product=bitwarden"
-    docker image prune --force --filter="label=com.soulseekkor.product=bitwarden"
+    docker image prune --all --force --filter="label=com.bitwarden.product=bitwarden"
+    docker image prune --all --force --filter="label=com.soulseekkor.product=bitwarden" \
+        --filter="label!=com.soulseekkor.project=setup"
 }
 
 function updateLetsEncrypt() {

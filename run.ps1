@@ -1,7 +1,7 @@
 param (
     [string]$outputDir = "../.",
-    [string]$coreVersion = "1.25.0",
-    [string]$webVersion = "2.4.0",
+    [string]$coreVersion = "1.26.0",
+    [string]$webVersion = "2.5.0",
     [switch] $install,
     [switch] $start,
     [switch] $restart,
@@ -80,8 +80,9 @@ function Docker-Compose-Files {
 }
 
 function Docker-Prune {
-    docker image prune --force --filter="label=com.bitwarden.product=bitwarden"
-    docker image prune --force --filter="label=com.soulseekkor.product=bitwarden"
+    docker image prune --all --force --filter="label=com.bitwarden.product=bitwarden"
+    docker image prune --all --force --filter="label=com.soulseekkor.product=bitwarden" `
+        --filter="label!=com.soulseekkor.project=setup"
 }
 
 function Update-Lets-Encrypt {
