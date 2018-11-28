@@ -1,7 +1,7 @@
 param (
     [string]$outputDir = "../.",
-    [string]$coreVersion = "1.26.0",
-    [string]$webVersion = "2.5.0",
+    [string]$coreVersion = "latest",
+    [string]$webVersion = "latest",
     [switch] $install,
     [switch] $start,
     [switch] $restart,
@@ -77,7 +77,7 @@ function Docker-Compose-Files {
     else {
         $env:COMPOSE_FILE = "${dockerDir}\docker-compose.yml"
     }
-    $env:COMPOSE_HTTP_TIMEOUT = "360"
+    $env:COMPOSE_HTTP_TIMEOUT = "300"
 }
 
 function Docker-Prune {

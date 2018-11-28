@@ -14,13 +14,13 @@ then
     OUTPUT_DIR=$2
 fi
 
-COREVERSION="1.26.0"
+COREVERSION="latest"
 if [ $# -gt 2 ]
 then
     COREVERSION=$3
 fi
 
-WEBVERSION="2.5.0"
+WEBVERSION="latest"
 if [ $# -gt 3 ]
 then
     WEBVERSION=$4
@@ -120,7 +120,7 @@ function dockerComposeFiles() {
     else
         export COMPOSE_FILE="$DOCKER_DIR/docker-compose.yml"
     fi
-    export COMPOSE_HTTP_TIMEOUT="360"
+    export COMPOSE_HTTP_TIMEOUT="300"
 }
 
 function dockerPrune() {
