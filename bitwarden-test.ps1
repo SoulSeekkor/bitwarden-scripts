@@ -28,7 +28,7 @@ Write-Host @'
 
 Write-Host "
 Open source password management solutions
-Copyright ${year}, Soul's Services
+Copyright 2018-${year}, Soul's Services
 https://soulseekkor.com, https://github.com/soulseekkor
 
 ===================================================

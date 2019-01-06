@@ -12,7 +12,7 @@ EOF
 
 cat << EOF
 Open source password management solutions
-Copyright $(date +'%Y'), Soul's Services
+Copyright 2018-$(date +'%Y'), Soul's Services
 https://soulseekkor.com, https://github.com/soulseekkor
 
 ===================================================
@@ -37,8 +37,8 @@ fi
 
 SCRIPTS_DIR="$OUTPUT/scripts"
 GITHUB_BASE_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-COREVERSION="1.28.0"
-WEBVERSION="2.7.1"
+COREVERSION="1.29.0"
+WEBVERSION="2.8.0"
 
 # Functions
 

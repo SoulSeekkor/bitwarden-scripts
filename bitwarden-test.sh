@@ -18,7 +18,7 @@ EOF
 
 cat << EOF
 Open source password management solutions
-Copyright $(date +'%Y'), Soul's Services
+Copyright 2018-$(date +'%Y'), Soul's Services
 https://soulseekkor.com, https://github.com/soulseekkor
 
 ===================================================

@@ -22,7 +22,7 @@ Write-Host @'
 
 Write-Host "
 Open source password management solutions
-Copyright ${year}, Soul's Services
+Copyright 2018-${year}, Soul's Services
 https://soulseekkor.com, https://github.com/soulseekkor
 
 ===================================================
@@ -43,8 +43,8 @@ if ($output -eq "") {
 
 $scriptsDir = "${output}\scripts"
 $githubBaseUrl = "https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-$coreVersion = "1.28.0"
-$webVersion = "2.7.1"
+$coreVersion = "1.29.0"
+$webVersion = "2.8.0"
 
 # Functions
 
