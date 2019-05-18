@@ -20,8 +20,8 @@ if ($output -eq "") {
 
 $scriptsDir = "${output}\scripts"
 $githubBaseUrl = "https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-$coreVersion = "1.30.1"
-$webVersion = "2.10.0"
+$coreVersion = "1.30.4"
+$webVersion = "2.10.1"
 
 # Functions
 
