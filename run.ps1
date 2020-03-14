@@ -7,6 +7,7 @@ param (
     [switch] $restart,
     [switch] $stop,
     [switch] $pull,
+    [switch] $updateconf,
     [switch] $updatedb,
     [switch] $update
 )
@@ -116,7 +117,9 @@ function Update-Lets-Encrypt {
 
 function Update-Database {
     Pull-Setup
-    docker run -it --rm --name setup --network container:bitwarden-mssql `
+    Docker-Compose-Files
+    $mssqlId = docker-compose ps -q bitwarden-mssql
+    docker run -it --rm --name setup --network container:$mssqlId `
         -v ${outputDir}:/bitwarden soulseekkor/bitwarden-setup:$coreVersion `
         dotnet Setup.dll -update 1 -db 1 -os win -corev $coreVersion -webv $webVersion -q $setupQuiet
     Write-Line "Database update complete"
@@ -141,7 +144,6 @@ function Restart {
     Docker-Compose-Pull
     Update-Lets-Encrypt
     Docker-Compose-Up
-    Docker-Prune
     Print-Environment
 }
 
@@ -169,6 +171,10 @@ elseif ($pull) {
 elseif ($stop) {
     Docker-Compose-Down
 }
+elseif ($updateconf) {
+    Docker-Compose-Down
+    Update -withpull
+}
 elseif ($updatedb) {
     Update-Database
 }
@@ -176,6 +182,7 @@ elseif ($update) {
     Docker-Compose-Down
     Update -withpull
     Restart
+    Docker-Prune
     Write-Line "Pausing 60 seconds for database to come online. Please wait..."
     Start-Sleep -s 60
     Update-Database
