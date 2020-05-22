@@ -37,14 +37,19 @@ fi
 
 SCRIPTS_DIR="$OUTPUT/scripts"
 GITHUB_BASE_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-COREVERSION="1.33.1"
-WEBVERSION="2.13.2"
+COREVERSION="1.34.0"
+WEBVERSION="2.14.0"
 
 # Functions
 
 function downloadSelf() {
-    curl -s -o $SCRIPT_PATH $GITHUB_BASE_URL/bitwarden.sh
-    chmod u+x $SCRIPT_PATH
+    if curl -s -w "http_code %{http_code}" -o $SCRIPT_PATH.1 $GITHUB_BASE_URL/bitwarden.sh | grep -q "^http_code 20[0-9]"
+    then
+        mv $SCRIPT_PATH.1 $SCRIPT_PATH
+        chmod u+x $SCRIPT_PATH
+    else
+        rm -f $SCRIPT_PATH.1
+    fi
 }
 
 function downloadRunFile() {
