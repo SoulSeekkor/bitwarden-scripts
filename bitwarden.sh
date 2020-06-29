@@ -37,8 +37,8 @@ fi
 
 SCRIPTS_DIR="$OUTPUT/scripts"
 GITHUB_BASE_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-COREVERSION="1.34.0"
-WEBVERSION="2.14.0"
+COREVERSION="1.35.1"
+WEBVERSION="2.15.1"
 
 # Functions
 
@@ -91,6 +91,7 @@ updatedb
 updaterun
 updateself
 updateconf
+renewcert
 rebuild
 help
 
@@ -132,6 +133,10 @@ elif [ "$1" == "stop" ]
 then
     checkOutputDirExists
     $SCRIPTS_DIR/run.sh stop $OUTPUT $COREVERSION $WEBVERSION
+elif [ "$1" == "renewcert" ]
+then
+    checkOutputDirExists
+    $SCRIPTS_DIR/run.sh renewcert $OUTPUT $COREVERSION $WEBVERSION
 elif [ "$1" == "updaterun" ]
 then
     checkOutputDirExists

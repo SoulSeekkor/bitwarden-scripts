@@ -6,6 +6,7 @@ param (
     [switch] $update,
     [switch] $rebuild,
     [switch] $updateconf,
+    [switch] $renewcert,
     [switch] $updatedb,
     [switch] $updaterun,
     [switch] $updateself,
@@ -23,8 +24,8 @@ if ($output -eq "") {
 
 $scriptsDir = "${output}\scripts"
 $githubBaseUrl = "https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-$coreVersion = "1.34.0"
-$webVersion = "2.14.0"
+$coreVersion = "1.35.1"
+$webVersion = "2.15.1"
 
 # Functions
 
@@ -64,6 +65,7 @@ Available commands:
 -updaterun
 -updateself
 -updateconf
+-renewcert
 -rebuild
 -help
 
@@ -136,6 +138,10 @@ elseif ($updatedb) {
 elseif ($stop) {
     Check-Output-Dir-Exists
     Invoke-Expression "& `"$scriptsDir\run.ps1`" -stop -outputDir `"$output`" -coreVersion $coreVersion -webVersion $webVersion"
+}
+elseif ($renewcert) {
+    Check-Output-Dir-Exists
+    Invoke-Expression "& `"$scriptsDir\run.ps1`" -renewcert -outputDir `"$output`" -coreVersion $coreVersion -webVersion $webVersion"
 }
 elseif ($updaterun) {
     Check-Output-Dir-Exists

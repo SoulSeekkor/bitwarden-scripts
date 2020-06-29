@@ -8,6 +8,7 @@ param (
     [switch] $stop,
     [switch] $pull,
     [switch] $updateconf,
+    [switch] $renewcert,
     [switch] $updatedb,
     [switch] $update
 )
@@ -76,6 +77,7 @@ function Install() {
 
 function Docker-Compose-Up {
     Docker-Compose-Files
+    Docker-Compose-Volumes
     Invoke-Expression ("docker-compose up -d{0}" -f $quietPullFlag)
 }
 
@@ -99,6 +101,30 @@ function Docker-Compose-Files {
     $env:COMPOSE_HTTP_TIMEOUT = "300"
 }
 
+function Docker-Compose-Volumes {
+    Create-Dir "core"
+    Create-Dir "core/attachments"
+    Create-Dir "logs"
+    Create-Dir "logs/admin"
+    Create-Dir "logs/api"
+    Create-Dir "logs/events"
+    Create-Dir "logs/icons"
+    Create-Dir "logs/identity"
+    Create-Dir "logs/mssql"
+    Create-Dir "logs/nginx"
+    Create-Dir "logs/notifications"
+    Create-Dir "mssql/backups"
+    Create-Dir "mssql/data"
+}
+
+function Create-Dir($str) {
+    $outPath = "${outputDir}/$str"
+    if (!(Test-Path -Path $outPath )) {
+        Write-Line "Creating directory $outPath"
+        New-Item -ItemType directory -Path $outPath | Out-Null
+    }
+}
+
 function Docker-Prune {
     docker image prune --all --force --filter="label=com.bitwarden.product=bitwarden"
     docker image prune --all --force --filter="label=com.soulseekkor.product=bitwarden" `
@@ -111,6 +137,16 @@ function Update-Lets-Encrypt {
         $certbotExp = "docker run -it --rm --name certbot -p ${certbotHttpsPort}:443 -p ${certbotHttpPort}:80 " +`
             "-v ${outputDir}/letsencrypt:/etc/letsencrypt/ certbot/certbot " +`
             "renew{0} --logs-dir /etc/letsencrypt/logs" -f $qFlag
+        Invoke-Expression $certbotExp
+    }
+}
+
+function Force-Update-Lets-Encrypt {
+    if (Test-Path -Path "${outputDir}\letsencrypt\live") {
+        Invoke-Expression ("docker pull{0} certbot/certbot" -f "") #TODO: qFlag
+        $certbotExp = "docker run -it --rm --name certbot -p ${certbotHttpsPort}:443 -p ${certbotHttpPort}:80 " +`
+            "-v ${outputDir}/letsencrypt:/etc/letsencrypt/ certbot/certbot " +`
+            "renew{0} --logs-dir /etc/letsencrypt/logs --force-renew" -f $qFlag
         Invoke-Expression $certbotExp
     }
 }
@@ -147,6 +183,15 @@ function Restart {
     Print-Environment
 }
 
+function Cert-Restart {
+    Docker-Compose-Down
+    Docker-Compose-Pull
+    Force-Update-Lets-Encrypt
+    Docker-Compose-Up
+    Print-Environment
+}
+
+
 function Pull-Setup {
     Invoke-Expression ("docker pull{0} soulseekkor/bitwarden-setup:${coreVersion}" -f "") #TODO: qFlag
 }
@@ -170,6 +215,9 @@ elseif ($pull) {
 }
 elseif ($stop) {
     Docker-Compose-Down
+}
+elseif ($renewcert) {
+    Cert-Restart
 }
 elseif ($updateconf) {
     Docker-Compose-Down
