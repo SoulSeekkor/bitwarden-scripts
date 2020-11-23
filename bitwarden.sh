@@ -37,8 +37,8 @@ fi
 
 SCRIPTS_DIR="$OUTPUT/scripts"
 GITHUB_BASE_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-COREVERSION="1.35.1"
-WEBVERSION="2.15.1"
+COREVERSION="1.38.1"
+WEBVERSION="2.17.0"
 
 # Functions
 
