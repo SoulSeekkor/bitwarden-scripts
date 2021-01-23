@@ -106,6 +106,7 @@ https://soulseekkor.com, https://github.com/soulseekkor
 "
 
 if($env:BITWARDEN_QUIET -ne "true") {
+    Write-Line "bitwarden-test.ps1 version ${coreVersion}"
     docker --version
     docker-compose --version
 }
