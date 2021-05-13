@@ -56,23 +56,26 @@ function install() {
         DOMAIN="localhost"
     fi
     
-    if [ "$DOMAIN" != "localhost" ]
+    if [ 0 == 1]
     then
-        echo -e -n "${CYAN}(!)${NC} Do you want to use Let's Encrypt to generate a free SSL certificate? (y/n): "
-        read LETS_ENCRYPT
-        echo ""
-    
-        if [ "$LETS_ENCRYPT" == "y" ]
+        if [ "$DOMAIN" != "localhost" ]
         then
-            echo -e -n "${CYAN}(!)${NC} Enter your email address (Let's Encrypt will send you certificate expiration reminders): "
-            read EMAIL
+            echo -e -n "${CYAN}(!)${NC} Do you want to use Let's Encrypt to generate a free SSL certificate? (y/n): "
+            read LETS_ENCRYPT
             echo ""
-    
-            mkdir -p $OUTPUT_DIR/letsencrypt
-            docker pull certbot/certbot
-            docker run -it --rm --name certbot -p 80:80 -v $OUTPUT_DIR/letsencrypt:/etc/letsencrypt/ certbot/certbot \
-                certonly --standalone --noninteractive  --agree-tos --preferred-challenges http \
-                --email $EMAIL -d $DOMAIN --logs-dir /etc/letsencrypt/logs
+        
+            if [ "$LETS_ENCRYPT" == "y" ]
+            then
+                echo -e -n "${CYAN}(!)${NC} Enter your email address (Let's Encrypt will send you certificate expiration reminders): "
+                read EMAIL
+                echo ""
+        
+                mkdir -p $OUTPUT_DIR/letsencrypt
+                docker pull certbot/certbot
+                docker run -it --rm --name certbot -p 80:80 -v $OUTPUT_DIR/letsencrypt:/etc/letsencrypt/ certbot/certbot \
+                    certonly --standalone --noninteractive  --agree-tos --preferred-challenges http \
+                    --email $EMAIL -d $DOMAIN --logs-dir /etc/letsencrypt/logs
+            fi
         fi
     fi
     
@@ -232,6 +235,7 @@ function pullSetup() {
 case $1 in
     "install")
         install
+        dockerPrune
         ;;
     "start" | "restart")
         restart

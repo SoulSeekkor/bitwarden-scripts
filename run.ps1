@@ -45,27 +45,29 @@ function Install() {
         $domain = "localhost"
     }
     
-    if ($domain -ne "localhost") {
-        Write-Host "(!) " -f cyan -nonewline
-        $letsEncrypt = $( Read-Host "Do you want to use Let's Encrypt to generate a free SSL certificate? (y/n)" )
-        echo ""
-    
-        if ($letsEncrypt -eq "y") {
+    if (0 -eq 1) {
+        if ($domain -ne "localhost") {
             Write-Host "(!) " -f cyan -nonewline
-            [string]$email = $( Read-Host ("Enter your email address (Let's Encrypt will send you certificate " +
-                "expiration reminders)") )
+            $letsEncrypt = $( Read-Host "Do you want to use Let's Encrypt to generate a free SSL certificate? (y/n)" )
             echo ""
-    
-            $letsEncryptPath = "${outputDir}/letsencrypt"
-            if (!(Test-Path -Path $letsEncryptPath )) {
-                New-Item -ItemType directory -Path $letsEncryptPath | Out-Null
+        
+            if ($letsEncrypt -eq "y") {
+                Write-Host "(!) " -f cyan -nonewline
+                [string]$email = $( Read-Host ("Enter your email address (Let's Encrypt will send you certificate " +
+                    "expiration reminders)") )
+                echo ""
+        
+                $letsEncryptPath = "${outputDir}/letsencrypt"
+                if (!(Test-Path -Path $letsEncryptPath )) {
+                    New-Item -ItemType directory -Path $letsEncryptPath | Out-Null
+                }
+                Invoke-Expression ("docker pull{0} certbot/certbot" -f "") #TODO: qFlag
+                $certbotExp = "docker run -it --rm --name certbot -p ${certbotHttpsPort}:443 -p ${certbotHttpPort}:80 " +`
+                    "-v ${outputDir}/letsencrypt:/etc/letsencrypt/ certbot/certbot " +`
+                    "certonly{0} --standalone --noninteractive --agree-tos --preferred-challenges http " +`
+                    "--email ${email} -d ${domain} --logs-dir /etc/letsencrypt/logs"
+                Invoke-Expression ($certbotExp -f $qFlag)
             }
-            Invoke-Expression ("docker pull{0} certbot/certbot" -f "") #TODO: qFlag
-            $certbotExp = "docker run -it --rm --name certbot -p ${certbotHttpsPort}:443 -p ${certbotHttpPort}:80 " +`
-                "-v ${outputDir}/letsencrypt:/etc/letsencrypt/ certbot/certbot " +`
-                "certonly{0} --standalone --noninteractive --agree-tos --preferred-challenges http " +`
-                "--email ${email} -d ${domain} --logs-dir /etc/letsencrypt/logs"
-            Invoke-Expression ($certbotExp -f $qFlag)
         }
     }
     
@@ -210,6 +212,7 @@ function Write-Line($str) {
 
 if ($install) {
     Install
+    Docker-Prune
 }
 elseif ($start -Or $restart) {
     Restart
