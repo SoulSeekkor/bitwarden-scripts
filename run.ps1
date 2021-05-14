@@ -212,10 +212,10 @@ function Write-Line($str) {
 
 if ($install) {
     Install
-    Docker-Prune
 }
 elseif ($start -Or $restart) {
     Restart
+    Docker-Prune
 }
 elseif ($pull) {
     Docker-Compose-Pull

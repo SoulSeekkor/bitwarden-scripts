@@ -235,10 +235,10 @@ function pullSetup() {
 case $1 in
     "install")
         install
-        dockerPrune
         ;;
     "start" | "restart")
         restart
+        dockerPrune
         ;;
     "pull")
         dockerComposePull
