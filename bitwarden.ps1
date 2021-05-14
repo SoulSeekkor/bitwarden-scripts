@@ -24,8 +24,8 @@ if ($output -eq "") {
 
 $scriptsDir = "${output}\scripts"
 $githubBaseUrl = "https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
-$coreVersion = "1.40.0"
-$webVersion = "2.19.0"
+$coreVersion = "1.41.2"
+$webVersion = "2.20.1"
 
 # Functions
 
@@ -69,7 +69,7 @@ Available commands:
 -rebuild
 -help
 
-See more at https://help.bitwarden.com/article/install-on-premise/#script-commands
+See more at https://bitwarden.com/help/article/install-on-premise/#script-commands-reference
 "
 }
 
