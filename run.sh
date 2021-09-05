@@ -78,12 +78,21 @@ function install() {
             fi
         fi
     fi
+
+    echo -e -n "${CYAN}(!)${NC} Enter the database name for your Bitwarden instance (ex. vault): "
+    read DATABASE
+    echo ""
+
+    if [ "$DATABASE" == "" ]
+    then
+        DATABASE="vault"
+    fi
     
     pullSetup
     docker run -it --rm --name setup -v $OUTPUT_DIR:/bitwarden \
         --env-file $ENV_DIR/uid.env soulseekkor/bitwarden-setup:$COREVERSION \
         dotnet Setup.dll -install 1 -domain $DOMAIN -letsencrypt $LETS_ENCRYPT -os $OS \
-        -corev $COREVERSION -webv $WEBVERSION
+        -corev $COREVERSION -webv $WEBVERSION -dbname "$DATABASE"
 }
 
 function dockerComposeUp() {
