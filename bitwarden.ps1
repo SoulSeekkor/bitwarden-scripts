@@ -26,8 +26,8 @@ $scriptsDir = "${output}\scripts"
 $githubBaseUrl = "https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
 
 # Please do not create pull requests modifying the version numbers.
-$coreVersion = "1.42.3"
-$webVersion = "2.22.3"
+$coreVersion = "1.43.0"
+$webVersion = "2.23.0"
 
 # Functions
 
@@ -86,9 +86,9 @@ function Write-Line($str) {
 $year = (Get-Date).year
 
 Write-Line @'
-                 _ _       _     _ _                         _            
- ___  ___  _   _| ( )___  | |__ (_) |___      ____ _ _ __ __| | ___ _ __  
-/ __|/ _ \| | | | |// __| | '_ \| | __\ \ /\ / / _` | '__/ _` |/ _ \ '_ \ 
+                 _ _       _     _ _                         _
+ ___  ___  _   _| ( )___  | |__ (_) |___      ____ _ _ __ __| | ___ _ __
+/ __|/ _ \| | | | |// __| | '_ \| | __\ \ /\ / / _` | '__/ _` |/ _ \ '_ \
 \__ \ (_) | |_| | | \__ \ | |_) | | |_ \ V  V / (_| | | | (_| |  __/ | | |
 |___/\___/ \__,_|_| |___/ |_.__/|_|\__| \_/\_/ \__,_|_|  \__,_|\___|_| |_|
 '@

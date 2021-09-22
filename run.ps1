@@ -50,13 +50,13 @@ function Install() {
 	        Write-Host "(!) " -f cyan -nonewline
 	        $letsEncrypt = $( Read-Host "Do you want to use Let's Encrypt to generate a free SSL certificate? (y/n)" )
 	        echo ""
-	    
+
 	        if ($letsEncrypt -eq "y") {
 	            Write-Host "(!) " -f cyan -nonewline
 	            [string]$email = $( Read-Host ("Enter your email address (Let's Encrypt will send you certificate " +
 	                    "expiration reminders)") )
 	            echo ""
-	    
+
 	            $letsEncryptPath = "${outputDir}/letsencrypt"
 	            if (!(Test-Path -Path $letsEncryptPath )) {
 	                New-Item -ItemType directory -Path $letsEncryptPath | Out-Null

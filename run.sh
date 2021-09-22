@@ -63,13 +63,13 @@ function install() {
             echo -e -n "${CYAN}(!)${NC} Do you want to use Let's Encrypt to generate a free SSL certificate? (y/n): "
             read LETS_ENCRYPT
             echo ""
-        
+
             if [ "$LETS_ENCRYPT" == "y" ]
             then
                 echo -e -n "${CYAN}(!)${NC} Enter your email address (Let's Encrypt will send you certificate expiration reminders): "
                 read EMAIL
                 echo ""
-        
+
                 mkdir -p $OUTPUT_DIR/letsencrypt
                 docker pull certbot/certbot
                 docker run -it --rm --name certbot -p 80:80 -v $OUTPUT_DIR/letsencrypt:/etc/letsencrypt/ certbot/certbot \
