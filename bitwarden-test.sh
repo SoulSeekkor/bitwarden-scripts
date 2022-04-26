@@ -18,8 +18,8 @@ EOF
 
 cat << EOF
 Open source password management solutions
-Copyright 2018-$(date +'%Y'), Soul's Services
-https://soulseekkor.com, https://github.com/soulseekkor
+Copyright 2015-$(date +'%Y'), Soul's Services
+https://www.soulseekkor.com, https://github.com/soulseekkor
 
 ===================================================
 
@@ -28,31 +28,45 @@ EOF
 # Setup
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SCRIPT_NAME=`basename "$0"`
+SCRIPT_NAME=$(basename "$0")
 SCRIPT_PATH="$DIR/$SCRIPT_NAME"
 OUTPUT="$DIR/bwdata"
 if [ $# -eq 2 ]
 then
     OUTPUT=$2
 fi
+if command -v docker-compose &> /dev/null
+then
+    dccmd='docker-compose'
+else
+    dccmd='docker compose'
+fi
 
 SCRIPTS_DIR="$OUTPUT/scripts"
-GITHUB_BASE_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master"
+BITWARDEN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master/bitwarden-test.sh"
+RUN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master/run.sh"
+
+# Please do not create pull requests modifying the version numbers.
 COREVERSION="test"
 WEBVERSION="test"
+KEYCONNECTORVERSION="test"
 
-echo "bitwarden-test.sh version $COREVERSION"
+echo "bitwarden.sh version $COREVERSION"
 docker --version
-docker-compose --version
+if [[ "$dccmd" == "docker compose" ]]; then
+    $dccmd version
+else
+    $dccmd --version
+fi
 
 echo ""
 
 # Functions
 
 function downloadSelf() {
-    if curl -s -w "http_code %{http_code}" -o $SCRIPT_PATH.1 $GITHUB_BASE_URL/bitwarden-test.sh | grep -q "^http_code 20[0-9]"
+    if curl -L -s -w "http_code %{http_code}" -o $SCRIPT_PATH.1 $BITWARDEN_SCRIPT_URL | grep -q "^http_code 20[0-9]"
     then
-        mv $SCRIPT_PATH.1 $SCRIPT_PATH
+        mv -f $SCRIPT_PATH.1 $SCRIPT_PATH
         chmod u+x $SCRIPT_PATH
     else
         rm -f $SCRIPT_PATH.1
@@ -64,7 +78,7 @@ function downloadRunFile() {
     then
         mkdir $SCRIPTS_DIR
     fi
-    curl -s -o $SCRIPTS_DIR/run.sh $GITHUB_BASE_URL/run.sh
+    curl -L -s -o $SCRIPTS_DIR/run.sh $RUN_SCRIPT_URL
     chmod u+x $SCRIPTS_DIR/run.sh
     rm -f $SCRIPTS_DIR/install.sh
 }
@@ -98,11 +112,12 @@ updatedb
 updaterun
 updateself
 updateconf
+uninstall
 renewcert
 rebuild
 help
 
-See more at https://help.bitwarden.com/article/install-on-premise/#script-commands
+See more at https://bitwarden.com/help/article/install-on-premise/#script-commands-reference
 
 EOT
 }
@@ -114,36 +129,36 @@ case $1 in
         checkOutputDirNotExists
         mkdir -p $OUTPUT
         downloadRunFile
-        $SCRIPTS_DIR/run.sh install $OUTPUT $COREVERSION $WEBVERSION
+        $SCRIPTS_DIR/run.sh install $OUTPUT $COREVERSION $WEBVERSION $KEYCONNECTORVERSION
         ;;
     "start" | "restart")
         checkOutputDirExists
-        $SCRIPTS_DIR/run.sh restart $OUTPUT $COREVERSION $WEBVERSION
+        $SCRIPTS_DIR/run.sh restart $OUTPUT $COREVERSION $WEBVERSION $KEYCONNECTORVERSION
         ;;
     "update")
         checkOutputDirExists
         downloadRunFile
-        $SCRIPTS_DIR/run.sh update $OUTPUT $COREVERSION $WEBVERSION
+        $SCRIPTS_DIR/run.sh update $OUTPUT $COREVERSION $WEBVERSION $KEYCONNECTORVERSION
         ;;
     "rebuild")
         checkOutputDirExists
-        $SCRIPTS_DIR/run.sh rebuild $OUTPUT $COREVERSION $WEBVERSION
+        $SCRIPTS_DIR/run.sh rebuild $OUTPUT $COREVERSION $WEBVERSION $KEYCONNECTORVERSION
         ;;
     "updateconf")
         checkOutputDirExists
-        $SCRIPTS_DIR/run.sh updateconf $OUTPUT $COREVERSION $WEBVERSION
+        $SCRIPTS_DIR/run.sh updateconf $OUTPUT $COREVERSION $WEBVERSION $KEYCONNECTORVERSION
         ;;
     "updatedb")
         checkOutputDirExists
-        $SCRIPTS_DIR/run.sh updatedb $OUTPUT $COREVERSION $WEBVERSION
+        $SCRIPTS_DIR/run.sh updatedb $OUTPUT $COREVERSION $WEBVERSION $KEYCONNECTORVERSION
         ;;
     "stop")
         checkOutputDirExists
-        $SCRIPTS_DIR/run.sh stop $OUTPUT $COREVERSION $WEBVERSION
+        $SCRIPTS_DIR/run.sh stop $OUTPUT $COREVERSION $WEBVERSION $KEYCONNECTORVERSION
         ;;
-    "renewcrt")
+    "renewcert")
         checkOutputDirExists
-        $SCRIPTS_DIR/run.sh renewcert $OUTPUT $COREVERSION $WEBVERSION
+        $SCRIPTS_DIR/run.sh renewcert $OUTPUT $COREVERSION $WEBVERSION $KEYCONNECTORVERSION
         ;;
     "updaterun")
         checkOutputDirExists
@@ -151,6 +166,10 @@ case $1 in
         ;;
     "updateself")
         downloadSelf && echo "Updated self." && exit
+        ;;
+    "uninstall")
+        checkOutputDirExists
+        $SCRIPTS_DIR/run.sh uninstall $OUTPUT
         ;;
     "help")
         listCommands

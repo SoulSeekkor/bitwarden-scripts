@@ -2,8 +2,15 @@
 set -e
 
 # Setup
+if command -v docker-compose &> /dev/null
+then
+    dccmd='docker-compose'
+else
+    dccmd='docker compose'
+fi
 
 CYAN='\033[0;36m'
+RED='\033[1;31m'
 NC='\033[0m' # No Color
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -24,6 +31,12 @@ WEBVERSION="latest"
 if [ $# -gt 3 ]
 then
     WEBVERSION=$4
+fi
+
+KEYCONNECTORVERSION="latest"
+if [ $# -gt 4 ]
+then
+    KEYCONNECTORVERSION=$5
 fi
 
 OS="lin"
@@ -55,29 +68,6 @@ function install() {
     then
         DOMAIN="localhost"
     fi
-    
-    if [ "0" == "1" ]
-    then
-        if [ "$DOMAIN" != "localhost" ]
-        then
-            echo -e -n "${CYAN}(!)${NC} Do you want to use Let's Encrypt to generate a free SSL certificate? (y/n): "
-            read LETS_ENCRYPT
-            echo ""
-
-            if [ "$LETS_ENCRYPT" == "y" ]
-            then
-                echo -e -n "${CYAN}(!)${NC} Enter your email address (Let's Encrypt will send you certificate expiration reminders): "
-                read EMAIL
-                echo ""
-
-                mkdir -p $OUTPUT_DIR/letsencrypt
-                docker pull certbot/certbot
-                docker run -it --rm --name certbot -p 80:80 -v $OUTPUT_DIR/letsencrypt:/etc/letsencrypt/ certbot/certbot \
-                    certonly --standalone --noninteractive  --agree-tos --preferred-challenges http \
-                    --email $EMAIL -d $DOMAIN --logs-dir /etc/letsencrypt/logs
-            fi
-        fi
-    fi
 
     echo -e -n "${CYAN}(!)${NC} Enter the database name for your Bitwarden instance (ex. vault): "
     read DATABASE
@@ -92,25 +82,25 @@ function install() {
     docker run -it --rm --name setup -v $OUTPUT_DIR:/bitwarden \
         --env-file $ENV_DIR/uid.env soulseekkor/bitwarden-setup:$COREVERSION \
         dotnet Setup.dll -install 1 -domain $DOMAIN -letsencrypt $LETS_ENCRYPT -os $OS \
-        -corev $COREVERSION -webv $WEBVERSION -dbname "$DATABASE"
+        -corev $COREVERSION -webv $WEBVERSION -dbname "$DATABASE" -keyconnectorv $KEYCONNECTORVERSION
 }
 
 function dockerComposeUp() {
     dockerComposeFiles
     dockerComposeVolumes
-    docker-compose up -d
+    $dccmd up -d
 }
 
 function dockerComposeDown() {
     dockerComposeFiles
-    if [ $(docker-compose ps | wc -l) -gt 2 ]; then
-        docker-compose down
+    if [ $($dccmd ps | wc -l) -gt 2 ]; then
+        $dccmd down
     fi
 }
 
 function dockerComposePull() {
     dockerComposeFiles
-    docker-compose pull
+    $dccmd pull
 }
 
 function dockerComposeFiles() {
@@ -140,7 +130,7 @@ function createDir() {
 }
 
 function dockerPrune() {
-    docker image prune --all --force --filter="label=com.bitwarden.product=bitwarden"
+    docker image prune --all --force --filter="label=com.bitwarden.product=bitwarden" \
     docker image prune --all --force --filter="label=com.soulseekkor.product=bitwarden" \
         --filter="label!=com.soulseekkor.project=setup"
 }
@@ -168,18 +158,32 @@ function forceUpdateLetsEncrypt() {
 function updateDatabase() {
     pullSetup
     dockerComposeFiles
-    MSSQL_ID=$(docker-compose ps -q mssql)
+    MSSQL_ID=$($dccmd ps -q mssql)
     docker run -i --rm --name setup --network container:$MSSQL_ID \
         -v $OUTPUT_DIR:/bitwarden --env-file $ENV_DIR/uid.env soulseekkor/bitwarden-setup:$COREVERSION \
-        dotnet Setup.dll -update 1 -db 1 -os $OS -corev $COREVERSION -webv $WEBVERSION
+        dotnet Setup.dll -update 1 -db 1 -os $OS -corev $COREVERSION -webv $WEBVERSION -keyconnectorv $KEYCONNECTORVERSION
     echo "Database update complete"
 }
 
 function updatebw() {
-    CORE_ID=$(docker-compose ps -q admin)
-    WEB_ID=$(docker-compose ps -q web)
-    if docker inspect --format='{{.Config.Image}}:' $CORE_ID | grep -F ":$COREVERSION:" | grep -q ":[0-9.]*:$" &&
-       docker inspect --format='{{.Config.Image}}:' $WEB_ID | grep -F ":$WEBVERSION:" | grep -q ":[0-9.]*:$"
+    KEY_CONNECTOR_ENABLED=$(grep -A3 'enable_key_connector:' $OUTPUT_DIR/config.yml | tail -n1 | awk '{ print $2}')
+    CORE_ID=$($dccmd ps -q admin)
+    WEB_ID=$($dccmd ps -q web)
+    if [ "$KEY_CONNECTOR_ENABLED" = true ];
+    then
+        KEYCONNECTOR_ID=$($dccmd ps -q key-connector)
+    fi
+
+    if [ $KEYCONNECTOR_ID ] &&
+        docker inspect --format='{{.Config.Image}}:' $CORE_ID | grep -F ":$COREVERSION:" | grep -q ":[0-9.]*:$" &&
+        docker inspect --format='{{.Config.Image}}:' $WEB_ID | grep -F ":$WEBVERSION:" | grep -q ":[0-9.]*:$" &&
+        docker inspect --format='{{.Config.Image}}:' $KEYCONNECTOR_ID | grep -F ":$KEYCONNECTORVERSION:" | grep -q ":[0-9.]*:$"
+    then
+        echo "Update not needed"
+        exit
+    elif
+        docker inspect --format='{{.Config.Image}}:' $CORE_ID | grep -F ":$COREVERSION:" | grep -q ":[0-9.]*:$" &&
+        docker inspect --format='{{.Config.Image}}:' $WEB_ID | grep -F ":$WEBVERSION:" | grep -q ":[0-9.]*:$"
     then
         echo "Update not needed"
         exit
@@ -199,14 +203,54 @@ function update() {
     fi
     docker run -i --rm --name setup -v $OUTPUT_DIR:/bitwarden \
         --env-file $ENV_DIR/uid.env soulseekkor/bitwarden-setup:$COREVERSION \
-        dotnet Setup.dll -update 1 -os $OS -corev $COREVERSION -webv $WEBVERSION
+        dotnet Setup.dll -update 1 -os $OS -corev $COREVERSION -webv $WEBVERSION -keyconnectorv $KEYCONNECTORVERSION
+}
+
+function uninstall() {
+    echo -e -n "${RED}(WARNING: UNINSTALL STARTED) Would you like to save the database files? (y/n): ${NC}"
+    read KEEP_DATABASE
+
+    if [ "$KEEP_DATABASE" == "y" ]
+    then
+        echo "Saving database files."
+        tar -cvzf "./bitwarden_database.tar.gz" "$OUTPUT_DIR/mssql"
+        echo -e -n "${RED}(SAVED DATABASE FILES: YES): WARNING: ALL DATA WILL BE REMOVED, INCLUDING THE FOLDER $OUTPUT_DIR): Are you sure you want to uninstall Bitwarden? (y/n): ${NC}"
+        read UNINSTALL_ACTION
+    else
+        echo -e -n "${RED}WARNING: ALL DATA WILL BE REMOVED, INCLUDING THE FOLDER $OUTPUT_DIR): Are you sure you want to uninstall Bitwarden? (y/n): ${NC}"
+        read UNINSTALL_ACTION
+    fi
+
+    
+    if [ "$UNINSTALL_ACTION" == "y" ]
+    then
+        echo "Uninstalling Bitwarden..."
+        dockerComposeDown
+        echo "Removing $OUTPUT_DIR"
+        rm -R $OUTPUT_DIR
+        echo "Removing MSSQL docker volume."
+        docker volume prune --force --filter="label=com.soulseekkor.product=bitwarden"
+        echo "Bitwarden uninstall complete!"
+    else
+        echo -e -n "${CYAN}(!) Bitwarden uninstall canceled. ${NC}"
+        exit 1
+    fi
+
+    echo -e -n "${RED}(!) Would you like to purge all local Bitwarden container images? (y/n): ${NC}"
+    read PURGE_ACTION
+    if [ "$PURGE_ACTION" == "y" ]
+    then
+        dockerPrune
+        echo -e -n "${CYAN}Bitwarden uninstall complete! ${NC}"
+    fi
+    
 }
 
 function printEnvironment() {
     pullSetup
     docker run -i --rm --name setup -v $OUTPUT_DIR:/bitwarden \
         --env-file $ENV_DIR/uid.env soulseekkor/bitwarden-setup:$COREVERSION \
-        dotnet Setup.dll -printenv 1 -os $OS -corev $COREVERSION -webv $WEBVERSION
+        dotnet Setup.dll -printenv 1 -os $OS -corev $COREVERSION -webv $WEBVERSION -keyconnectorv $KEYCONNECTORVERSION
 }
 
 function restart() {
@@ -259,6 +303,10 @@ case $1 in
         dockerComposeFiles
         updatebw
         updateDatabase
+        ;;
+    "uninstall")
+        dockerComposeFiles
+        uninstall
         ;;
     "rebuild")
         dockerComposeDown
