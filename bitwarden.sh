@@ -42,7 +42,7 @@ RUN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/
 
 # Please do not create pull requests modifying the version numbers.
 COREVERSION="1.48.1"
-WEBVERSION="2.28.0"
+WEBVERSION="2.28.1"
 KEYCONNECTORVERSION="1.0.1"
 
 echo "bitwarden.sh version $COREVERSION"
