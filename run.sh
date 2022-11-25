@@ -130,7 +130,7 @@ function createDir() {
 }
 
 function dockerPrune() {
-    docker image prune --all --force --filter="label=com.bitwarden.product=bitwarden" \
+    docker image prune --all --force --filter="label=com.bitwarden.product=bitwarden"
     docker image prune --all --force --filter="label=com.soulseekkor.product=bitwarden" \
         --filter="label!=com.soulseekkor.project=setup"
 }
