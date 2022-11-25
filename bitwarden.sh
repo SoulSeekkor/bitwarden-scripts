@@ -41,9 +41,9 @@ BITWARDEN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-sc
 RUN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master/run.sh"
 
 # Please do not create pull requests modifying the version numbers.
-COREVERSION="1.48.1"
-WEBVERSION="2.28.1"
-KEYCONNECTORVERSION="1.0.1"
+COREVERSION="2022.10.0"
+WEBVERSION="2022.10.2"
+KEYCONNECTORVERSION="2022.5.0"
 
 echo "bitwarden.sh version $COREVERSION"
 docker --version
