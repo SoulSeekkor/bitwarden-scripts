@@ -37,8 +37,8 @@ else
 fi
 
 SCRIPTS_DIR="$OUTPUT/scripts"
-BITWARDEN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master/bitwarden.sh"
-RUN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-scripts/master/run.sh"
+BITWARDEN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-self-host/main/bitwarden.sh"
+RUN_SCRIPT_URL="https://raw.githubusercontent.com/SoulSeekkor/bitwarden-self-host/main/run.sh"
 
 # Please do not create pull requests modifying the version numbers.
 COREVERSION="2024.7.4"
